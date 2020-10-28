@@ -1,0 +1,23 @@
+#!/bin/bash
+
+#create a variable with a list of nuccore IDs
+VAR=$(cat $1)
+
+
+for i in ${VAR}
+    do
+        echo "(o) Downloading entry : ${i}"    # will echo which entry is downloading at each loop round
+        efetch -db nuccore -id ${i} -format fasta > ${i}.fna # will download that entry
+        echo "(o) Done downloading ${i}"               #warns when it's done
+   done
+
+#use downloaded sequences to upload on PHASTER
+for file in $2/*.fna
+    do
+        wget --post-file="${file}" "http://phaster.ca/phaster_api" -O temp_output.txt
+        cat temp_output.txt>>final_phaster_output.txt
+    done
+rm temp_output.txt
+echo 'Done'
+
+
